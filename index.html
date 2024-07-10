@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Círculo Rebotante</title>
+  <style>
+    #circle {
+      width: 50px;
+      height: 50px;
+      background-color: black; /* Establecer el color inicial del círculo en negro */
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+    }
+
+    #reset-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background-color: gray;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="circle"></div>
+  <button id="reset-button">Reiniciar</button>
+
+  <script>
+    const circle = document.getElementById('circle');
+
+    // Posición inicial del círculo en el centro de la pantalla
+    let x = window.innerWidth / 2 - 25;
+    let y = window.innerHeight / 2 - 25;
+
+    // Velocidad inicial del círculo (30 píxeles por fotograma)
+    let dx = 30;
+    let dy = 30;
+
+    // Velocidad máxima del círculo (80 píxeles por segundo)
+    let maxSpeed = 80;
+
+    // Bandera para indicar si el círculo está en movimiento
+    let isMoving = false;
+
+    // Colocar el círculo en el centro al cargar la página
+    circle.style.left = `${x}px`;
+    circle.style.top = `${y}px`;
+
+    // Evento de clic en el círculo
+    circle.addEventListener('click', () => {
+      if (!isMoving) {
+        isMoving = true;
+        moveCircle();
+      }
+    });
+
+    // Evento de clic en el botón de reinicio
+    document.getElementById('reset-button').addEventListener('click', () => {
+      isMoving = false;
+      x = window.innerWidth / 2 - 25;
+      y = window.innerHeight / 2 - 25;
+
+      // Restablecer la velocidad inicial a 30 píxeles por fotograma
+      dx = 30;
+      dy = 30;
+
+      circle.style.left = `${x}px`;
+      circle.style.top = `${y}px`;
+      circle.style.cursor = 'pointer';
+      circle.style.backgroundColor = 'black'; // Restablecer el color del círculo a negro
+    });
+
+    // Función que mueve el círculo
+    function moveCircle() {
+      if (isMoving) {
+        x += dx;
+        y += dy;
+
+        // Rebote en los bordes de la pantalla
+        if (x + 50 > window.innerWidth || x < 0) {
+          dx = -dx;
+          if (Math.abs(dx) < maxSpeed) {
+            dx *= 1.1;
+          }
+          circle.style.backgroundColor = getRandomSaturatedColor(); // Cambiar el color del círculo al rebotar
+        }
+
+        if (y + 50 > window.innerHeight || y < 0) {
+          dy = -dy;
+          if (Math.abs(dy) < maxSpeed) {
+            dy *= 1.1;
+          }
+          circle.style.backgroundColor = getRandomSaturatedColor(); // Cambiar el color del círculo al rebotar
+        }
+
+        circle.style.left = `${x}px`;
+        circle.style.top = `${y}px`;
+        requestAnimationFrame(moveCircle);
+      }
+    }
+
+    // Función para generar un color aleatorio saturado y brillante, evitando el blanco
+    function getRandomSaturatedColor() {
+      let hue, saturation, lightness;
+      do {
+        hue = Math.floor(Math.random() * 360);
+        saturation = 80 + Math.floor(Math.random() * 20);
+        lightness = 50 + Math.floor(Math.random() * 50);
+      } while (lightness > 90); // Evitar que el color sea demasiado claro (blanco)
+      return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
+  </script>
+</body>
+</html>
